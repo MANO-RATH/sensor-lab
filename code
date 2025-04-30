@@ -1,0 +1,93 @@
+#include <LiquidCrystal_I2C.h>
+
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Format -> (Address, Width, Height)
+
+
+#define echoPin 2  // attach pin D2 Arduino to Echo pin of Sensor module
+
+#define trigPin 3  // attach pin D3 Arduino to Trig pin of Sensor module
+
+
+long duration;  // Declare variable to store echo time duration
+
+float distance; // Declare variable to store the result (distance) as a decimal
+
+
+void setup()
+
+{
+
+    lcd.init();         // Initialize the LCD
+
+    lcd.backlight();    // Turn on the backlight
+
+
+    pinMode(trigPin, OUTPUT);  // Sets the trigPin as an OUTPUT
+
+    pinMode(echoPin, INPUT);   // Sets the echoPin as an INPUT
+
+
+    // Serial Communication is starting with 9600 baudrate speed
+
+    Serial.begin(9600);
+
+
+    // The text to be printed in serial monitor
+
+    Serial.println("Distance measurement using Arduino Uno");
+
+    delay(500);
+
+}
+
+
+void loop()
+
+{
+
+    digitalWrite(trigPin, LOW);
+
+    delayMicroseconds(2);
+
+    digitalWrite(trigPin, HIGH);
+
+    delayMicroseconds(10);
+
+    digitalWrite(trigPin, LOW);
+
+
+    duration = pulseIn(echoPin, HIGH);
+
+    distance = duration * 0.0344 / 2.0; // Ensure floating point division
+
+
+    // Print the result to the serial monitor
+
+    Serial.print("Distance: ");
+
+    Serial.print(distance, 2); // Print with 2 decimal places
+
+    Serial.println(" cm");
+
+
+    // Display the result on the LCD
+
+    lcd.clear();             // Clear the display buffer
+
+    lcd.setCursor(0, 0);     // Set cursor for "Distance:" (Column, Row)
+
+    lcd.print("Distance:");   // Print "Distance:" at (0, 0)
+
+    lcd.setCursor(0, 1);     // Set cursor for output value (0, 1)
+
+    lcd.print(distance, 2);   // Print the distance with 2 decimal places
+
+    lcd.setCursor(8, 1);     // Move cursor to (8, 1)
+
+    lcd.print("cm");         // Print "cm" at (8, 1)
+
+
+    delay(2000);
+
+}
